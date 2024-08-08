@@ -1,0 +1,453 @@
+---
+title: "Rreproducible results. Integrating agent-based disease, mobility, and wastewater models"
+subtitle: "Dealing with differences in spatiotemporal resolutions"
+author: "*Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla*"
+abstract: "This quarto file documents the results of the mentioned research manuscript following open science and sustainalbe software practices"
+date: "2024-06-05"
+format:
+  html:
+    toc: true
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+#Load libraries
+library(dplyr)
+library(tidyr)
+library(readr)
+library(tibble)
+library(ggplot2)
+library(lubridate)
+library(xts)
+
+library(sf)
+library(terra)
+library(tmap)    # for static and interactive maps
+library(gifski)
+library(tibbletime)
+#Head tail breaks
+library(classInt)
+library(plotly)
+library(dygraphs)
+library(knitr)
+library(DT)
+
+#Setup code required
+ver.tim <- 0
+
+#Import .shp (manholes, blocks) ----
+mholes_tbl = read_sf("data/manholes.snt.height.shp")
+blocks_tbl = read_sf("data/13m.loc.snt.2020.mz800.wgs84.shp")
+pipes_tbl = read_sf("data/pipes.snt.shp")
+households_tbl = read_sf("data/households.snt.wgs84.shp")
+ 
+#Load SMS-ABM Netlogo outcomes ----
+
+# Epidemic curve patterns: multiple experiments
+source("code/dw.daily.infection.records/daily.infection.records.t0.4.mx4.R")
+#source("code/dw.daily.infection.records/daily.infection.records.t0.1.mx2.R")
+#source("code/dw.daily.infection.records/daily.infection.records.t0.05.mx1.R")
+#source("code/dw.daily.infection.records/daily.infection.records.t0.1.mx4.R")
+
+# Mobility during the outbreak
+source("code/dw.daily.infection.records/daily.infection.records.mobility.R")
+
+#Households maps series of daily infections
+source("code/daily.infection.hoseholds/map.series.households.R")
+
+#Load/pre-processing daily sewer map series
+source("code/sewer.map.series/sewer.daily.infected.dw.mapseries.R")
+
+#Sewer maps series daily, hourly, minutes variability
+source("code/sewer.map.series/sewer.poo.mapseries.daily.hourly.minutes.R")
+
+
+```
+
+**Affiliation:**
+
+`Department of Geo-Information Processing (GIP),  Faculty of Geo-Information Science and Earth Observation (ITC),  University of Twente,  Drienerlolaan 5, 7522 NB Enschede, The Netherlands`
+
+# Section 4. Use case
+
+**Objective:** Demonstrate the model integration of disease, population mobility, and wastewater with an outbreak of COVID-19. Simulate the spread of the disease among the population while keeping records of inhabitants generating infected wastewater.
+
+## 4.1. COVID-19 Outbreak
+
+### Figure 2
+
+Mapping the density of infected inhabitants at households over time. The figure represents the sum of 25 simulations showing robust results and highlighting the spatial heterogeneity of the households. Disease variables β = 0.4, and S = 4 are used.
+
+```{r}
+#| echo: false
+#| label: households
+#| fig-column: page-right
+#| fig-height: 10
+#| fig-width: 8
+#| fig-show: hold
+##| fig-cap: "B)"
+#| cap-location: margin
+
+#Mapping infected stool events
+tm_shape(blocks_tbl) + #tm_polygons() + 
+  tm_fill(col = "#f0f0f0")+
+  tm_shape(households_tbl)+
+  tm_dots(col = "#bdbdbd")+
+  tm_shape(hholds.infected.daily) + 
+  tm_bubbles(size = 'daily.infect', 
+             col= 'daily.infect',
+             title.size= "Infected inhabitants(at home)",
+             legend.size.show=FALSE,
+             legend.hist= TRUE,
+             legend.hist.title = 
+               "Symbol colors histogram",
+             title.col= "Infected inhabitants at home",
+             legend.col.is.portrait=TRUE,
+             #size.lim= c(1200,4000),
+             style="pretty",
+             #style.args = list(thr = 0.5),
+             palette="-Spectral", 
+             border.col = '#bdbdbd') +
+  tm_facets(by = "date.time", ncol=4,
+            free.coords = TRUE,
+            free.scales.symbol.size=FALSE,
+            free.scales.symbol.col=FALSE,
+            scale.factor=5)+
+  tm_layout(main.title.position=c("left","top"),
+            main.title=
+              "Spatiotemporal daily outbreak at households",
+            #legend.outside.position= "right",
+            outer.margins=0,inner.margins=0,between.margin=0)
+```
+
+
+### Figure 3 d)
+
+Epidemic curves of simulated outbreaks for the population and infected stool. The stool columns differentiate between infected stool with and without considering whether the recovered population continues to produce infected stool. Rows a, b, c, and d represent four simulations with different combinations of transmission probabilities (β) and the maximum number of possible inhabitants that can be infected (S). Each scenario is run 25 times to ensure stable results.
+
+```{r}
+#| echo: false
+#| label: populationStool1
+#| fig-width: 10
+#| fig-height: 4
+#| fig-column: page-right
+#| fig-show: hold
+##| fig-cap: "A)"
+#| cap-location: margin
+
+# # Separate infections: population + stool(x2)
+# daily.infection.t0.05.mx1|> select(!c(r0,X6,X7,X8))|>
+#   pivot_longer(!date.time)|>
+#   rename(Positive.events = value,
+#          Infected.Category = name)|> 
+#   mutate(Infected.Cat = str_replace(
+#     Infected.Category, 
+#     "Poo.during&after.infection", "Infected.Stool.Prevalence"),
+#     Infected.Cat = str_replace(
+#       Infected.Cat,
+#       "Poo.infected.population", "Infected.Stool.No.Prevalence"),
+#     Infected.Cat = str_replace(
+#       Infected.Cat,
+#       "Population", "Infected.Population"))|> 
+#   ggplot(aes(x = date.time,  y = Positive.events,
+#              alpha = 0.75)) +
+#   geom_jitter()+
+#   guides(alpha = "none")+
+#   scale_x_datetime(
+#     date_minor_breaks = "1 day", 
+#     date_breaks = "5 days",
+#     date_labels = "%Y-%m-%d")+
+#   theme(axis.text.x = element_text(angle = 30, 
+#                                    hjust = .5, 
+#                                    vjust = 0.5)) +
+#   ylim(0,310) +
+#     facet_grid(
+#       ~factor(
+#         Infected.Cat,
+#         levels =c("Infected.Stool.Prevalence",
+#                   "Infected.Stool.No.Prevalence",
+#                   "Infected.Population")))
+# 
+# # Separate infections: population + stool(x2)
+# daily.infection.t0.1.mx2|> select(!c(r0,X6,X7,X8))|>
+#   pivot_longer(!date.time)|>
+#   rename(Positive.events = value,
+#          Infected.Category = name)|> 
+#   mutate(Infected.Cat = str_replace(
+#     Infected.Category, 
+#     "Poo.during&after.infection", "Infected.Stool.Prevalence"),
+#     Infected.Cat = str_replace(
+#       Infected.Cat,
+#       "Poo.infected.population", "Infected.Stool.No.Prevalence"),
+#     Infected.Cat = str_replace(
+#       Infected.Cat,
+#       "Population", "Infected.Population"))|> 
+#   ggplot(aes(x = date.time,  y = Positive.events,
+#              alpha = 0.75)) +
+#   geom_jitter()+
+#   guides(alpha = "none")+
+#   scale_x_datetime(
+#     date_minor_breaks = "1 day", 
+#     date_breaks = "5 days",
+#     date_labels = "%Y-%m-%d")+
+#   theme(axis.text.x = element_text(angle = 30, 
+#                                    hjust = .5, 
+#                                    vjust = 0.5)) +
+#   ylim(0,310) +
+#     facet_grid(
+#       ~factor(
+#         Infected.Cat,
+#         levels =c("Infected.Stool.Prevalence",
+#                   "Infected.Stool.No.Prevalence",
+#                   "Infected.Population")))
+# 
+# # Separate infections: population + stool(x2)
+# daily.infection.t0.1.mx4|> select(!c(r0,X6,X7,X8))|>
+#   pivot_longer(!date.time)|>
+#   rename(Positive.events = value,
+#          Infected.Category = name)|> 
+#   mutate(Infected.Cat = str_replace(
+#     Infected.Category, 
+#     "Poo.during&after.infection", "Infected.Stool.Prevalence"),
+#     Infected.Cat = str_replace(
+#       Infected.Cat,
+#       "Poo.infected.population", "Infected.Stool.No.Prevalence"),
+#     Infected.Cat = str_replace(
+#       Infected.Cat,
+#       "Population", "Infected.Population"))|> 
+#   ggplot(aes(x = date.time,  y = Positive.events,
+#              alpha = 0.75)) +
+#   geom_jitter()+
+#   guides(alpha = "none")+
+#   scale_x_datetime(
+#     date_minor_breaks = "1 day", 
+#     date_breaks = "5 days",
+#     date_labels = "%Y-%m-%d")+
+#   theme(axis.text.x = element_text(angle = 30, 
+#                                    hjust = .5, 
+#                                    vjust = 0.5)) +
+#   ylim(0,310) +
+#     facet_grid(
+#       ~factor(
+#         Infected.Cat,
+#         levels =c("Infected.Stool.Prevalence",
+#                   "Infected.Stool.No.Prevalence",
+#                   "Infected.Population")))
+
+# Separate infections: population + stool(x2)
+daily.infection.t0.4.mx4|> select(!c(r0,X6,X7,X8))|>
+  pivot_longer(!date.time)|>
+  rename(Positive.events = value,
+         Infected.Category = name)|> 
+  mutate(Infected.Cat = str_replace(
+    Infected.Category, 
+    "Poo.during&after.infection", "Infected.Stool.Prevalence"),
+    Infected.Cat = str_replace(
+      Infected.Cat,
+      "Poo.infected.population", "Infected.Stool.No.Prevalence"),
+    Infected.Cat = str_replace(
+      Infected.Cat,
+      "Population", "Infected.Population"))|> 
+  ggplot(aes(x = date.time,  y = Positive.events,
+             alpha = 0.75)) +
+  geom_jitter()+
+  guides(alpha = "none")+
+  scale_x_datetime(
+    date_minor_breaks = "1 day", 
+    date_breaks = "5 days",
+    date_labels = "%Y-%m-%d")+
+  theme(axis.text.x = element_text(angle = 30, 
+                                   hjust = .5, 
+                                   vjust = 0.5)) +
+  ylim(0,310) +
+    facet_grid(
+      ~factor(
+        Infected.Cat,
+        levels =c("Infected.Stool.Prevalence",
+                  "Infected.Stool.No.Prevalence",
+                  "Infected.Population")))
+
+```
+
+## 4.2. Mobility and COVID-19 spread
+
+### Figure 4.
+
+Mobility pattern of the count of inhabitants at home during an outbreak. The mobility pattern shows the increase of inhabitants remaining at home during the days of the outbreak (2022-03-23 to 2022-03-31), which synchronizes with Figure 2.
+
+```{r}
+#| echo: false
+#| label: outbreakmobility
+#| fig-width: 10
+#| fig-height: 4
+#| fig-column: page-right
+#| fig-show: hold
+##| fig-cap: "A2)"
+#| cap-location: margin
+
+# Separate infections: population + stool(x2)
+hourly.house.mobility|> select(!c(seed,run,exp))|>
+  pivot_longer(!date.time)|>
+  rename(Inhabitants.at.home = value,
+         Infected.Category = name)|>
+  ggplot(aes(x = date.time,  y = Inhabitants.at.home,
+             alpha = 0.75)) +
+  geom_smooth()+
+  guides(alpha = "none")+
+  scale_x_datetime(
+    date_minor_breaks = "1 day", 
+    date_breaks = "5 days",
+    date_labels = "%Y-%m-%d")+
+  theme(axis.text.x = element_text(angle = 30, 
+                                   hjust = .5, 
+                                   vjust = 0.5))
+```
+
+## 4.3 Sewer infected wastewater
+
+### Figure 5.
+
+Example of simulated infected wastewater particles at sewage maintenance holes at daily resolution. Map series with 24-hours interval during the outbreak period from 25 simulations showing the daily transition of the number of infected particles. Disease variables β=0.4, and S=4. are used.
+
+```{r}
+#| echo: false
+#| label: infected wastewater daily res
+#| fig-column: page-right
+#| fig-height: 10
+#| fig-width: 9
+#| fig-show: hold
+##| fig-cap: "E)"
+#| cap-location: margin
+
+x <- mholes24h_tbl.stool.recovering|>  filter(
+              date.time <= as.POSIXct("2022-04-08 23:00:00", tz='UTC') &
+              date.time >= as.POSIXct("2022-03-24 00:00:00", tz='UTC'))
+
+#Mapping infected stool events
+tm_shape(blocks_tbl_f['wwtp.conex']) + #tm_polygons() + 
+  tm_fill(col = "#f0f0f0")+
+  tm_shape(pipes_tbl)+
+  tm_lines(col = "#bdbdbd")+
+  tm_shape(x) + 
+  tm_bubbles(size = 'stool.infected', 
+             col= 'stool.infected',
+             title.size= "Infected Stool(event)",
+             legend.size.show=FALSE,
+             legend.hist= TRUE,
+             legend.hist.title = 
+               "Symbol colors histogram",
+             title.col= "Infected wastewater particles",
+             legend.col.is.portrait=TRUE,
+             #size.lim= c(1200,4000),
+             style="pretty",
+             style.args = list(n = 6),
+             palette="-Spectral", 
+             border.col = '#bdbdbd') +
+  tm_facets(by = "date.time", ncol=4,
+            free.coords = TRUE,
+            free.scales.symbol.size=FALSE,
+            free.scales.symbol.col=FALSE,
+            scale.factor=5)+
+  tm_layout(main.title.position=c("left","top"),
+            main.title=
+              "Daily infected wastewater, full outbreak, 24 hrs",
+            #legend.outside.position= "right",
+            outer.margins=0,inner.margins=0,between.margin=0)
+remove(x)
+
+```
+
+### Figure 6. a) & b)
+
+Differences between resolutions of infected wastewater particles at sewage maintenance holes. a) Map series with 60-minute interval during the peak outbreak hour from 25 simulations showing the hourly transition of the number of particles. b) Map series with 06-minute interval during the peak outbreak from 25 simulations showing the transition of the number of particles in short time intervals. Disease variables β=0.4, and S=4. are used.
+
+```{r}
+#| echo: false
+#| label: infeted wastewater hour res
+#| fig-column: page-right
+#| fig-height: 10
+#| fig-width: 9
+#| fig-show: hold
+##| fig-cap: "D)"
+#| cap-location: margin
+
+#Mapping infected stool events
+
+x <- mholes60m_tbl.stool.recovering|>  filter(
+             date.time <= as.POSIXct("2022-04-01 11:00:00", tz='UTC') &
+             date.time >= as.POSIXct("2022-04-01 08:00:00", tz='UTC'))
+  
+tm_shape(blocks_tbl_f['wwtp.conex']) + #tm_polygons() + 
+  tm_fill(col = "#f0f0f0")+
+  tm_shape(pipes_tbl)+
+  tm_lines(col = "#bdbdbd")+
+  tm_shape(x) + 
+  tm_bubbles(size = 'stool.infected', 
+             col= 'stool.infected',
+             title.size= "Infected Stool(event)",
+             legend.size.show=FALSE,
+             legend.hist= FALSE,
+             legend.hist.title = 
+               "Symbol colors histogram",
+             title.col= "Infected wastewater particles",
+             legend.col.is.portrait=TRUE,
+             #size.lim= c(1200,4000),
+             style="pretty",
+             #style.args = list(thr = 0.5),
+             palette="-Spectral", 
+             border.col = '#bdbdbd') +
+  tm_facets(by = "date.time", ncol=4,
+            free.coords = TRUE,
+            free.scales.symbol.size=FALSE,
+            free.scales.symbol.col=FALSE,
+            scale.factor=5)+
+  tm_layout(main.title.position=c("left","top"),
+            main.title=
+              "Population recovering, April 1, 60 min",
+            #legend.outside.position= "right",
+            outer.margins=0,inner.margins=0,between.margin=0)
+```
+
+```{r}
+#| echo: false
+#| label: infected stool recovering six min res
+#| fig-column: page-right
+#| fig-height: 10
+#| fig-width: 9
+#| fig-show: hold
+##| fig-cap: "C)"
+#| cap-location: margin
+
+#Mapping infected stool events
+tm_shape(blocks_tbl_f['wwtp.conex']) + #tm_polygons() + 
+  tm_fill(col = "#f0f0f0")+
+  tm_shape(pipes_tbl)+
+  tm_lines(col = "#bdbdbd")+
+  tm_shape(mholes06m_tbl.stool.recovering) + 
+  tm_bubbles(size = 'stool.infected', 
+             col= 'stool.infected',
+             title.size= "Infected Stool(event)",
+             legend.size.show=FALSE,
+             legend.hist= TRUE,
+             legend.hist.title = 
+               "Symbol colors histogram",
+             title.col= "Infected wastewater particles",
+             legend.col.is.portrait=TRUE,
+             #size.lim= c(1200,4000),
+             style="pretty",
+             #style.args = list(thr = 0.85),
+             palette="-Spectral", 
+             border.col = '#bdbdbd') +
+  tm_facets(by = "date.time", ncol=4,
+            free.coords = TRUE,
+            free.scales.symbol.size=FALSE,
+            free.scales.symbol.col=FALSE,
+            scale.factor=5)+
+  tm_layout(main.title.position=c("left","top"),
+            main.title=
+              "Population recovering, April 1, 06 min",
+            #legend.outside.position= "right",
+            outer.margins=0,inner.margins=0,between.margin=0)
+```
