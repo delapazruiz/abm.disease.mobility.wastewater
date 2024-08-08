@@ -1,7 +1,8 @@
 
 
-**README. Reproducible results.Integrating agent-based disease, mobility, and wastewater models:** 
+**README. Reproducible results. Integrating agent-based disease, mobility, and wastewater models:** 
 *Dealing with differences in spatiotemporal resolutions*
+================ 
 
 Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla. June, 2024
 
@@ -55,7 +56,7 @@ You will need the following:
 
 -   Download or copy this repository to a local folder .
 
-1.  Open-source software:
+2.  Open-source software:
 
 Quick reproducibility (requires NetLogo/Rstudio experience):
 
@@ -85,7 +86,7 @@ Docker):
     Desktop can take a couple of hours. Running NetLogo with your own
     NetLogo 6.1.1 installation can take around 25 minutes.
 
-1.  Libraries and extensions:
+3. Libraries and extensions:
 
 -   NetLogo: The first time running the Netlogo file, you will get a
     windows to install the time extension. Follow the instructions to
@@ -103,7 +104,7 @@ reproduce results as the alternative for non-experienced users.
 
 Steps for a quick reproduction:
 
-1.  In a new folder, execute the following commands in git bash:
+1)  In a new folder, execute the following commands in git bash:
 
 <!-- -->
 
@@ -111,7 +112,7 @@ Steps for a quick reproduction:
 
     . ./code/newfiles.txt
 
-1.  Open the NetLogo (v. 6.3) file and run the experiment. In
+2)  Open the NetLogo (v. 6.3) file and run the experiment. In
     Tools/BehaviorSpace, select number of processors to run the
     experiment. (time: around 30 min)
 
@@ -119,7 +120,7 @@ Steps for a quick reproduction:
 
     s3.integrating.wastewater.and.diseases.nlogo
 
-1.  Open the Rstudio project file and verify the library requirements.
+3)  Open the Rstudio project file and verify the library requirements.
 
 R Project file:
 
@@ -137,7 +138,7 @@ Run the following in the R console to install the required libraries.
 
     renv::restore()
 
-1.  Open the Quarto file (.qmd) and render it to generate the report:
+4)  Open the Quarto file (.qmd) and render it to generate the report:
     (time: around 10 min) 6
 
 <!-- -->
