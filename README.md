@@ -2,7 +2,6 @@
 
 **Reproducible results. Integrating agent-based disease, mobility, and wastewater models:** 
 *Dealing with differences in spatiotemporal resolutions*
-
 ================ 
 
 Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Shaheen A. Abdulkareem, Raul Zurita-Milla. June, 2024
