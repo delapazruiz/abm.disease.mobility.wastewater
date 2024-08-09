@@ -3,7 +3,7 @@
 **README. Reproducible results.Integrating agent-based disease, mobility, and wastewater models:** 
 *Dealing with differences in spatiotemporal resolutions*
 
-Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla. June, 2024
+Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Shaheen A. Abdulkareem, Raul Zurita-Milla. June, 2024
 
 -   [About](#about)
 -   [Getting Started](#getting-started)
@@ -55,7 +55,7 @@ You will need the following:
 
 -   Download or copy this repository to a local folder .
 
-1.  Open-source software:
+2.  Open-source software:
 
 Quick reproducibility (requires NetLogo/Rstudio experience):
 
@@ -65,7 +65,7 @@ Quick reproducibility (requires NetLogo/Rstudio experience):
 -   Install Rstudio. See:
     <https://dailies.rstudio.com/version/2023.12.1+402/>
 -   NetLogo note: For this option copy the provided `NetLogo.cfg` file
-    and replace it at the folder: `C:\Program Files\NetLogo 6.1.1\app`.
+    and replace it at the folder: `C:\Program Files\NetLogo 6.3.0\app`.
     In this way, you are free to use several processors. Please, refer
     to the following link: [FAQ: How big can my model be? How many
     turtles, patches, procedures, buttons, and so on can my model
@@ -81,11 +81,11 @@ Docker):
     <https://www.docker.com/products/docker-desktop/>
 -   NetLogo note: Before building and running NetLogo images and
     containers in Docker Desktop consider that you can run the NetLogo
-    models once you install NetLogo 6.1.1. Running NetLogo in Docker
+    models once you install NetLogo 6.3.0. Running NetLogo in Docker
     Desktop can take a couple of hours. Running NetLogo with your own
-    NetLogo 6.1.1 installation can take around 25 minutes.
+    NetLogo 6.3.0 installation can take around 25 minutes.
 
-1.  Libraries and extensions:
+3.  Libraries and extensions:
 
 -   NetLogo: The first time running the Netlogo file, you will get a
     windows to install the time extension. Follow the instructions to
@@ -111,7 +111,7 @@ Steps for a quick reproduction:
 
     . ./code/newfiles.txt
 
-1.  Open the NetLogo (v. 6.3) file and run the experiment. In
+2.  Open the NetLogo (v. 6.3) file and run the experiment. In
     Tools/BehaviorSpace, select number of processors to run the
     experiment. (time: around 30 min)
 
@@ -119,7 +119,7 @@ Steps for a quick reproduction:
 
     s3.integrating.wastewater.and.diseases.nlogo
 
-1.  Open the Rstudio project file and verify the library requirements.
+3.  Open the Rstudio project file and verify the library requirements.
 
 R Project file:
 
@@ -137,7 +137,7 @@ Run the following in the R console to install the required libraries.
 
     renv::restore()
 
-1.  Open the Quarto file (.qmd) and render it to generate the report:
+4.  Open the Quarto file (.qmd) and render it to generate the report:
     (time: around 10 min) 6
 
 <!-- -->

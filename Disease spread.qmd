@@ -1,7 +1,7 @@
 ---
 title: "Rreproducible results. Integrating agent-based disease, mobility, and wastewater models"
 subtitle: "Dealing with differences in spatiotemporal resolutions"
-author: "*Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla*"
+author: "*Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Shaheen A. Abdulkareem, Raul Zurita-Milla*"
 abstract: "This quarto file documents the results of the mentioned research manuscript following open science and sustainalbe software practices"
 date: "2024-06-05"
 format:
@@ -14,6 +14,8 @@ editor: visual
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 #Load libraries
+renv::restore()
+
 library(dplyr)
 library(tidyr)
 library(readr)
@@ -121,7 +123,6 @@ tm_shape(blocks_tbl) + #tm_polygons() +
             #legend.outside.position= "right",
             outer.margins=0,inner.margins=0,between.margin=0)
 ```
-
 
 ### Figure 3 d)
 
