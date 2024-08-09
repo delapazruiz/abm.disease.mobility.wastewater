@@ -4,7 +4,7 @@
 *Dealing with differences in spatiotemporal resolutions*
 ================ 
 
-Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla. June, 2024
+Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Shaheen A. Abdulkareem, Raul Zurita-Milla. June, 2024
 
 -   [About](#about)
 -   [Getting Started](#getting-started)
@@ -66,7 +66,7 @@ Quick reproducibility (requires NetLogo/Rstudio experience):
 -   Install Rstudio. See:
     <https://dailies.rstudio.com/version/2023.12.1+402/>
 -   NetLogo note: For this option copy the provided `NetLogo.cfg` file
-    and replace it at the folder: `C:\Program Files\NetLogo 6.1.1\app`.
+    and replace it at the folder: `C:\Program Files\NetLogo 6.3.0\app`.
     In this way, you are free to use several processors. Please, refer
     to the following link: [FAQ: How big can my model be? How many
     turtles, patches, procedures, buttons, and so on can my model
@@ -82,9 +82,9 @@ Docker):
     <https://www.docker.com/products/docker-desktop/>
 -   NetLogo note: Before building and running NetLogo images and
     containers in Docker Desktop consider that you can run the NetLogo
-    models once you install NetLogo 6.1.1. Running NetLogo in Docker
+    models once you install NetLogo 6.3 Running NetLogo in Docker
     Desktop can take a couple of hours. Running NetLogo with your own
-    NetLogo 6.1.1 installation can take around 25 minutes.
+    NetLogo 6.3 installation can take around 25 minutes.
 
 3. Libraries and extensions:
 
