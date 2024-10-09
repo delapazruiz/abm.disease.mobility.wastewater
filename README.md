@@ -66,27 +66,6 @@ Quick reproducibility (requires NetLogo/Rstudio experience):
     After the NetLogo installation, make sure to execute the
     `. ./code/newfiles.txt` in Git Bash.,
 
-Long-term reproducibility (On hold. Rrequires some familiarity with
-Docker):
-
--   Install and run Git Bash. See: <https://gitforwindows.org/>
--   Install and run Docker Desktop. See:
-    <https://www.docker.com/products/docker-desktop/>
--   NetLogo note: Before building and running NetLogo images and
-    containers in Docker Desktop consider that you can run the NetLogo
-    models once you install NetLogo 6.3.0. Running NetLogo in Docker
-    Desktop can take a couple of hours. Running NetLogo with your own
-    NetLogo 6.3.0 installation can take around 25 minutes.
-
-3.  Libraries and extensions:
-
--   NetLogo: The first time running the Netlogo file, you will get a
-    windows to install the time extension. Follow the instructions to
-    install it.
--   Rstudio: The first time that you open the R project execute the
-    `renv::restore()` in the R console to load the required libraries.
-    You can explore the library requirements in the `renv.lock` file.
-
 ## Quick reproducibility
 
 This section is for Windows users familiar with NetLogo, Rstudio, and
@@ -150,6 +129,29 @@ renv::restore()
 ``` bash
 Disease spread.qmd
 ```
+
+## Long-term reproducibility 
+
+Note: This version is not ready. do not try it. Requires some expertise with
+Docker.
+
+-   Install and run Git Bash. See: <https://gitforwindows.org/>
+-   Install and run Docker Desktop. See:
+    <https://www.docker.com/products/docker-desktop/>
+-   NetLogo note: Before building and running NetLogo images and
+    containers in Docker Desktop consider that you can run the NetLogo
+    models once you install NetLogo 6.3.0. Running NetLogo in Docker
+    Desktop can take a couple of hours. Running NetLogo with your own
+    NetLogo 6.3.0 installation can take around 25 minutes.
+
+3.  Libraries and extensions:
+
+-   NetLogo: The first time running the Netlogo file, you will get a
+    windows to install the time extension. Follow the instructions to
+    install it.
+-   Rstudio: The first time that you open the R project execute the
+    `renv::restore()` in the R console to load the required libraries.
+    You can explore the library requirements in the `renv.lock` file.
 
 ## Support
 
