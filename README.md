@@ -103,6 +103,10 @@ git clone https://github.com/delapazruiz/abm.disease.mobility.wastewater.git
 ```
 
 ``` bash
+cd abm.disease.mobility.wastewater
+```
+
+``` bash
 . ./code/newfiles.txt
 ```
 
