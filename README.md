@@ -4,6 +4,10 @@
 *Dealing with differences in spatiotemporal resolutions*
 ================ 
 
+Pre-print: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13734819.svg)](https://doi.org/10.5281/zenodo.13734819)
+
+Repository: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13734543.svg)](https://doi.org/10.5281/zenodo.13734543)
+
 Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Shaheen A. Abdulkareem, Raul Zurita-Milla. June, 2024
 
 Affiliation: Department of Geo-Information Process (GIP), Faculty of
@@ -132,7 +136,7 @@ Disease spread.qmd
 
 ## Long-term reproducibility 
 
-Note: This version is not ready. do not try it. Requires some expertise with
+Note: This version is not ready. Do not try it. Requires some expertise with
 Docker.
 
 -   Install and run Git Bash. See: <https://gitforwindows.org/>
