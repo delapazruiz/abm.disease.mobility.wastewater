@@ -8,6 +8,10 @@ Pre-print: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13734819.svg)](ht
 
 Repository: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13734543.svg)](https://doi.org/10.5281/zenodo.13734543)
 
+CODECHECK: [![CODECHECK](https://codecheck.org.uk/img/codeworks-badge.svg)](https://doi.org/10.17605/OSF.IO/6NGYC)
+
+The CODECHECK certificate is available confirming that the computations underlying the pre-print could be independently reproduced.
+
 Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Shaheen A. Abdulkareem, Raul Zurita-Milla. June, 2024
 
 Affiliation: Department of Geo-Information Process (GIP), Faculty of
