@@ -1,7 +1,6 @@
 
 
-**Reproducible results. Integrating agent-based disease, mobility, and wastewater models:** 
-*Dealing with differences in spatiotemporal resolutions*
+**Reproducible results. Integrating agent-based disease, mobility, and wastewater models for the study of the spread of communicable diseases** 
 ================ 
 
 Pre-print: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13734819.svg)](https://doi.org/10.5281/zenodo.13734819)
